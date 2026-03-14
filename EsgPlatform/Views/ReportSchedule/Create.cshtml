@@ -1,0 +1,95 @@
+@model ReportScheduleViewModel
+@{
+    ViewData["Title"] = "新增排程";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="d-flex align-items-center mb-4">
+            <a asp-action="Index" class="btn btn-sm btn-outline-secondary me-3">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <div>
+                <h4 class="mb-0 fw-bold">新增報告排程</h4>
+                <p class="text-muted mb-0 small">設定報告名稱、頻率與負責窗口</p>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <form asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="ReportName" class="form-label fw-semibold">
+                            <i class="bi bi-file-text me-1"></i>報告名稱 <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="ReportName" class="form-control" placeholder="例：月度碳排放盤查報告" />
+                        <span asp-validation-for="ReportName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Frequency" class="form-label fw-semibold">
+                                <i class="bi bi-arrow-repeat me-1"></i>頻率 <span class="text-danger">*</span>
+                            </label>
+                            <select asp-for="Frequency" class="form-select" id="frequencySelect">
+                                <option value="Monthly">月報（每月繳交）</option>
+                                <option value="Yearly">年報（每年繳交）</option>
+                            </select>
+                            <span asp-validation-for="Frequency" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="WarningDays" class="form-label fw-semibold">
+                                <i class="bi bi-bell me-1"></i>警示天數 <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <input asp-for="WarningDays" class="form-control" type="number" min="1" max="365" id="warningDaysInput" />
+                                <span class="input-group-text">天前預警</span>
+                            </div>
+                            <div class="form-text" id="warningHint">月報建議設定 7 天；年報建議設定 90 天</div>
+                            <span asp-validation-for="WarningDays" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ResponsiblePerson" class="form-label fw-semibold">
+                            <i class="bi bi-person-badge me-1"></i>負責窗口 <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="ResponsiblePerson" class="form-control" placeholder="例：環境管理部-王小明" />
+                        <span asp-validation-for="ResponsiblePerson" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="NextDueDate" class="form-label fw-semibold">
+                            <i class="bi bi-calendar-event me-1"></i>下次截止日 <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="NextDueDate" class="form-control" type="date" />
+                        <span asp-validation-for="NextDueDate" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success flex-grow-1">
+                            <i class="bi bi-check-lg me-2"></i>建立排程
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">取消</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    document.getElementById('frequencySelect').addEventListener('change', function() {
+        const warningInput = document.getElementById('warningDaysInput');
+        if (this.value === 'Monthly') {
+            warningInput.value = 7;
+        } else {
+            warningInput.value = 90;
+        }
+    });
+</script>
+}

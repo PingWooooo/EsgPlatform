@@ -1,0 +1,151 @@
+/* ============================================================
+   ESG 企業永續數據盤查平台 - 全域樣式
+   ============================================================ */
+
+html {
+    font-size: 14px;
+    scroll-behavior: smooth;
+}
+
+@media (min-width: 768px) {
+    html { font-size: 16px; }
+}
+
+body {
+    background-color: #f4f6f9;
+    font-family: "Microsoft JhengHei", "蘋方-繁", Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ============================================================
+   導覽列
+   ============================================================ */
+.bg-esg {
+    background: linear-gradient(135deg, #1a5c38 0%, #2d8653 100%) !important;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255,255,255,.8);
+    border-radius: 6px;
+    padding: 0.5rem 0.9rem;
+    transition: all .2s;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link.active {
+    color: #fff;
+    background: rgba(255,255,255,.15);
+}
+
+/* ============================================================
+   卡片樣式
+   ============================================================ */
+.card {
+    border-radius: 12px;
+    transition: box-shadow .2s;
+}
+
+.card:hover {
+    box-shadow: 0 4px 20px rgba(0,0,0,.08) !important;
+}
+
+/* ============================================================
+   紅綠燈燈號
+   ============================================================ */
+.status-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: block;
+}
+
+.status-dot.status-green  { background: #4caf50; box-shadow: 0 0 6px #4caf50; }
+.status-dot.status-yellow { background: #ffc107; box-shadow: 0 0 6px #ffc107; }
+.status-dot.status-red    { background: #f44336; box-shadow: 0 0 6px #f44336; animation: blink 1.4s infinite; }
+
+.status-badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.status-badge.status-green  { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+.status-badge.status-yellow { background: #fff8e1; color: #f57f17; border: 1px solid #ffe082; }
+.status-badge.status-red    { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: .3; }
+}
+
+/* ============================================================
+   拖曳上傳區
+   ============================================================ */
+.upload-zone {
+    border: 2.5px dashed #90caa3;
+    border-radius: 12px;
+    background: #f9fdf9;
+    cursor: pointer;
+    transition: all .2s;
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.upload-zone:hover,
+.upload-zone.drag-over {
+    border-color: #2d8653;
+    background: #e8f5e9;
+    transform: scale(1.01);
+}
+
+/* ============================================================
+   表格
+   ============================================================ */
+.table th {
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: .03em;
+    color: #555;
+}
+
+.table td { vertical-align: middle; }
+
+/* ============================================================
+   按鈕
+   ============================================================ */
+.btn-success {
+    background: #2d8653 !important;
+    border-color: #2d8653 !important;
+}
+
+.btn-success:hover {
+    background: #1a5c38 !important;
+    border-color: #1a5c38 !important;
+}
+
+.btn:focus { box-shadow: 0 0 0 0.2rem rgba(45,134,83,.3); }
+
+/* ============================================================
+   頁尾
+   ============================================================ */
+.footer { margin-top: auto; }
+
+/* ============================================================
+   其他工具
+   ============================================================ */
+.bg-purple { background: #7c3aed !important; }
+
+code {
+    background: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.85em;
+}
+
+details summary { cursor: pointer; }

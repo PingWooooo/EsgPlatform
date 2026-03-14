@@ -1,0 +1,81 @@
+@model ReportScheduleViewModel
+@{
+    ViewData["Title"] = "編輯排程";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="d-flex align-items-center mb-4">
+            <a asp-action="Index" class="btn btn-sm btn-outline-secondary me-3">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <div>
+                <h4 class="mb-0 fw-bold">編輯報告排程</h4>
+                <p class="text-muted mb-0 small">修改排程設定（ID：@Model.Id）</p>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <form asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
+                    <input asp-for="Id" type="hidden" />
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="ReportName" class="form-label fw-semibold">
+                            <i class="bi bi-file-text me-1"></i>報告名稱 <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="ReportName" class="form-control" />
+                        <span asp-validation-for="ReportName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Frequency" class="form-label fw-semibold">
+                                <i class="bi bi-arrow-repeat me-1"></i>頻率 <span class="text-danger">*</span>
+                            </label>
+                            <select asp-for="Frequency" class="form-select">
+                                <option value="Monthly">月報（每月繳交）</option>
+                                <option value="Yearly">年報（每年繳交）</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="WarningDays" class="form-label fw-semibold">
+                                <i class="bi bi-bell me-1"></i>警示天數 <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <input asp-for="WarningDays" class="form-control" type="number" min="1" max="365" />
+                                <span class="input-group-text">天前預警</span>
+                            </div>
+                            <span asp-validation-for="WarningDays" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ResponsiblePerson" class="form-label fw-semibold">
+                            <i class="bi bi-person-badge me-1"></i>負責窗口 <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="ResponsiblePerson" class="form-control" />
+                        <span asp-validation-for="ResponsiblePerson" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="NextDueDate" class="form-label fw-semibold">
+                            <i class="bi bi-calendar-event me-1"></i>下次截止日 <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="NextDueDate" class="form-control" type="date" />
+                        <span asp-validation-for="NextDueDate" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-grow-1">
+                            <i class="bi bi-save me-2"></i>儲存變更
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">取消</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

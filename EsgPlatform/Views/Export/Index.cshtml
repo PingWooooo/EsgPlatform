@@ -1,0 +1,126 @@
+@model IEnumerable<CalculationResult>
+@{
+    ViewData["Title"] = "資料匯出";
+    var scope1Total = Model.Where(r => r.Scope == 1).Sum(r => r.TotalCO2e);
+    var scope2Total = Model.Where(r => r.Scope == 2).Sum(r => r.TotalCO2e);
+}
+
+<div class="d-flex align-items-center mb-4">
+    <div class="rounded-circle p-3 me-3" style="background:#e8f5e9;">
+        <i class="bi bi-file-earmark-excel-fill fs-3 text-success"></i>
+    </div>
+    <div>
+        <h4 class="mb-0 fw-bold">資料匯出</h4>
+        <p class="text-muted mb-0 small">匯出 CO₂e 計算結果與原始數據為 Excel</p>
+    </div>
+</div>
+
+<!-- 匯出按鈕區 -->
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center py-4">
+                <i class="bi bi-calculator-fill fs-1 text-success mb-3 d-block"></i>
+                <h6 class="fw-semibold">CO₂e 計算結果</h6>
+                <p class="text-muted small mb-3">匯出所有計算完成的 CO₂e 結果，包含範疇、項目與計算時間</p>
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <div class="bg-danger bg-opacity-10 rounded p-2">
+                            <div class="fw-bold text-danger">@scope1Total.ToString("N2")</div>
+                            <div class="small text-muted">範疇一 CO₂e</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="bg-primary bg-opacity-10 rounded p-2">
+                            <div class="fw-bold text-primary">@scope2Total.ToString("N2")</div>
+                            <div class="small text-muted">範疇二 CO₂e</div>
+                        </div>
+                    </div>
+                </div>
+                <a asp-action="ExportResults" class="btn btn-success w-100">
+                    <i class="bi bi-download me-2"></i>匯出計算結果（.xlsx）
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center py-4">
+                <i class="bi bi-table fs-1 text-primary mb-3 d-block"></i>
+                <h6 class="fw-semibold">原始上傳數據</h6>
+                <p class="text-muted small mb-3">匯出所有上傳的原始活動量數據，包含範疇、類別與上傳者資訊</p>
+                <div class="bg-info bg-opacity-10 rounded p-2 mb-3">
+                    <div class="fw-bold text-info">@Model.Count()</div>
+                    <div class="small text-muted">計算結果總筆數</div>
+                </div>
+                <a asp-action="ExportRawData" class="btn btn-primary w-100">
+                    <i class="bi bi-download me-2"></i>匯出原始數據（.xlsx）
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 計算結果預覽表格 -->
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-0 pt-3">
+        <h6 class="card-title mb-0 fw-semibold">
+            <i class="bi bi-list-check me-2 text-success"></i>計算結果預覽（共 @Model.Count() 筆）
+        </h6>
+    </div>
+    <div class="card-body p-0">
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5 text-muted">
+                <i class="bi bi-inbox fs-1 opacity-25"></i>
+                <p class="mt-3">尚無計算結果，請先上傳 Excel 數據</p>
+                <a asp-controller="Upload" asp-action="Index" class="btn btn-success">
+                    <i class="bi bi-cloud-upload me-1"></i>前往上傳
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover table-sm mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">範疇</th>
+                            <th>排放類別</th>
+                            <th>排放項目</th>
+                            <th>CO₂e（公噸）</th>
+                            <th>上傳者</th>
+                            <th>上傳時間</th>
+                            <th>計算時間</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var r in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <span class="badge @(r.Scope == 1 ? "bg-danger" : "bg-primary")">
+                                        範疇 @r.Scope
+                                    </span>
+                                </td>
+                                <td>@r.Category</td>
+                                <td>@r.ItemName</td>
+                                <td class="fw-semibold text-success">@r.TotalCO2e.ToString("N4")</td>
+                                <td class="small text-muted">@r.Username</td>
+                                <td class="small text-muted">@r.UploadDate.ToString("yyyy/MM/dd HH:mm")</td>
+                                <td class="small text-muted">@r.CalculatedAt.ToString("yyyy/MM/dd HH:mm")</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot class="table-light">
+                        <tr>
+                            <td colspan="3" class="ps-4 fw-semibold">合計</td>
+                            <td class="fw-bold text-success">@Model.Sum(r => r.TotalCO2e).ToString("N4") 公噸</td>
+                            <td colspan="3"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        }
+    </div>
+</div>

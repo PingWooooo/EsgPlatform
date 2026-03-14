@@ -1,0 +1,267 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "儀表板";
+}
+
+<div class="row g-3 mb-4">
+    <!-- 範疇一卡片 -->
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="rounded-circle p-3 me-3" style="background:#e8f5e9;">
+                    <i class="bi bi-fire fs-3 text-danger"></i>
+                </div>
+                <div>
+                    <div class="text-muted small">範疇一 CO₂e</div>
+                    <div class="fw-bold fs-4 text-danger">@Model.Scope1Total.ToString("N2")</div>
+                    <div class="text-muted small">公噸 CO₂e</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 範疇二卡片 -->
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="rounded-circle p-3 me-3" style="background:#e3f2fd;">
+                    <i class="bi bi-lightning-charge-fill fs-3 text-primary"></i>
+                </div>
+                <div>
+                    <div class="text-muted small">範疇二 CO₂e</div>
+                    <div class="fw-bold fs-4 text-primary">@Model.Scope2Total.ToString("N2")</div>
+                    <div class="text-muted small">公噸 CO₂e</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 總計卡片 -->
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm h-100" style="background:linear-gradient(135deg,#1a5c38,#2d8653);">
+            <div class="card-body d-flex align-items-center text-white">
+                <div class="rounded-circle p-3 me-3" style="background:rgba(255,255,255,0.2);">
+                    <i class="bi bi-globe2 fs-3"></i>
+                </div>
+                <div>
+                    <div class="small opacity-75">總 CO₂e 排放</div>
+                    <div class="fw-bold fs-4">@Model.GrandTotal.ToString("N2")</div>
+                    <div class="small opacity-75">公噸 CO₂e</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 監控摘要卡片 -->
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small mb-2"><i class="bi bi-traffic-light me-1"></i>排程監控狀態</div>
+                <div class="d-flex justify-content-around text-center">
+                    <div>
+                        <div class="status-dot status-green mx-auto mb-1"></div>
+                        <div class="fw-bold fs-5 text-success">@Model.GreenCount</div>
+                        <div class="small text-muted">正常</div>
+                    </div>
+                    <div>
+                        <div class="status-dot status-yellow mx-auto mb-1"></div>
+                        <div class="fw-bold fs-5 text-warning">@Model.YellowCount</div>
+                        <div class="small text-muted">警告</div>
+                    </div>
+                    <div>
+                        <div class="status-dot status-red mx-auto mb-1"></div>
+                        <div class="fw-bold fs-5 text-danger">@Model.RedCount</div>
+                        <div class="small text-muted">逾期</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <!-- 圓餅圖 -->
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 pt-3">
+                <h6 class="card-title mb-0 fw-semibold">
+                    <i class="bi bi-pie-chart-fill me-2 text-success"></i>範疇一、二 CO₂e 佔比
+                </h6>
+            </div>
+            <div class="card-body d-flex align-items-center justify-content-center">
+                @if (Model.GrandTotal == 0)
+                {
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-bar-chart-line fs-1 opacity-25"></i>
+                        <p class="mt-2">尚無數據，請先上傳 Excel 進行盤查</p>
+                        <a asp-controller="Upload" asp-action="Index" class="btn btn-sm btn-success">
+                            <i class="bi bi-cloud-upload me-1"></i>前往上傳
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <canvas id="scopeChart" style="max-height: 280px;"></canvas>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- 排程監控清單 -->
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 pt-3 d-flex justify-content-between align-items-center">
+                <h6 class="card-title mb-0 fw-semibold">
+                    <i class="bi bi-traffic-light me-2 text-success"></i>排程監控清單
+                </h6>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-controller="ReportSchedule" asp-action="Index" class="btn btn-sm btn-outline-success">
+                        <i class="bi bi-gear me-1"></i>維護
+                    </a>
+                }
+            </div>
+            <div class="card-body p-0">
+                @if (!Model.MonitoringList.Any())
+                {
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-calendar-x fs-2 opacity-25"></i>
+                        <p class="mt-2 small">尚無排程設定</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3">報告名稱</th>
+                                    <th>頻率</th>
+                                    <th>截止日</th>
+                                    <th>負責人</th>
+                                    <th class="text-center">燈號</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.MonitoringList)
+                                {
+                                    <tr>
+                                        <td class="ps-3">
+                                            <span class="fw-semibold">@item.ReportName</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge @(item.Frequency == "Monthly" ? "bg-info" : "bg-purple") text-dark">
+                                                @(item.Frequency == "Monthly" ? "月報" : "年報")
+                                            </span>
+                                        </td>
+                                        <td class="small">@item.NextDueDate.ToString("yyyy/MM/dd")</td>
+                                        <td class="small text-muted">@item.ResponsiblePerson</td>
+                                        <td class="text-center">
+                                            <span class="status-badge @item.StatusCssClass">
+                                                @item.StatusDisplayName
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 最近計算結果 -->
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-0 pt-3 d-flex justify-content-between align-items-center">
+        <h6 class="card-title mb-0 fw-semibold">
+            <i class="bi bi-clock-history me-2 text-success"></i>最近計算結果
+        </h6>
+        <a asp-controller="Export" asp-action="Index" class="btn btn-sm btn-outline-success">
+            <i class="bi bi-download me-1"></i>查看全部
+        </a>
+    </div>
+    <div class="card-body p-0">
+        @if (!Model.RecentResults.Any())
+        {
+            <div class="text-center text-muted py-4">
+                <i class="bi bi-inbox fs-2 opacity-25"></i>
+                <p class="mt-2 small">尚無計算結果</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">範疇</th>
+                            <th>排放類別</th>
+                            <th>排放項目</th>
+                            <th>CO₂e（公噸）</th>
+                            <th>上傳者</th>
+                            <th>計算時間</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var r in Model.RecentResults)
+                        {
+                            <tr>
+                                <td class="ps-3">
+                                    <span class="badge @(r.Scope == 1 ? "bg-danger" : "bg-primary")">
+                                        範疇 @r.Scope
+                                    </span>
+                                </td>
+                                <td>@r.Category</td>
+                                <td>@r.ItemName</td>
+                                <td class="fw-semibold text-success">@r.TotalCO2e.ToString("N4")</td>
+                                <td class="small text-muted">@r.Username</td>
+                                <td class="small text-muted">@r.CalculatedAt.ToString("MM/dd HH:mm")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    @if (Model.GrandTotal > 0)
+    {
+        <text>
+        const ctx = document.getElementById('scopeChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['範疇一（直接排放）', '範疇二（間接排放）'],
+                datasets: [{
+                    data: [@Model.Scope1Total, @Model.Scope2Total],
+                    backgroundColor: ['#ef5350', '#1976d2'],
+                    borderWidth: 2,
+                    borderColor: '#fff',
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { font: { size: 13 }, padding: 16 }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                const pct   = total > 0 ? (ctx.raw / total * 100).toFixed(1) : 0;
+                                return ` ${ctx.raw.toFixed(2)} 公噸 CO₂e（${pct}%）`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        </text>
+    }
+</script>
+}
