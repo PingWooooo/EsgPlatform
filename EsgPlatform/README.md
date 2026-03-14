@@ -114,3 +114,5 @@ EsgPlatform/
 ├── Program.cs           # 應用程式進入點 + DI 設定
 └── appsettings.json     # 設定檔
 ```
+
+$2a$11$HANh/qo06HzSTFGeIJBSi.nj3Qu94AgnLWcLNVaP87CJDZSbQ3Umi
